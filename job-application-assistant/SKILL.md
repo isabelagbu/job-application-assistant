@@ -45,6 +45,8 @@ Store these in a working file for the session (not in the skill).
 ### 4. Records
 **Notion database** (create fresh if the user asks) with properties: Role (title), Company, Status (To Review / Applied / Interview / Rejected / Offer / Closed / Skipped), Location, Work Mode, Track, Job Link, Date Found, Date Applied, Salary (posted range + what was entered), Fit Notes, Resume Version, Cover Letter (checkbox), Desktop Folder, Follow-up Date (applied + 14 days).
 
+**Job description in Notion (always)**: paste the full job description text into the body of each application's Notion page, under a "## Job Description" heading (insert_content). Copy it as-is; extra page text is fine. Quick source for LinkedIn postings: open `https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/<jobId>` in the browser and read the page text.
+
 **Desktop folder**: `~/Desktop/Job Applications/<YYYY-MM-DD> – <Company> – <Role>/` containing:
 - `resume.pdf` (+ .docx), `cover-letter.pdf`
 - `job-posting.md` — full posting text with link, location, salary, date saved

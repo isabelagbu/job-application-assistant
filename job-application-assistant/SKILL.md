@@ -1,6 +1,6 @@
 ---
 name: "job-application-assistant"
-description: "Find, tailor and apply to jobs end to end: tailored 1-page resumes and cover letters from Google Drive, Notion tracking, per-job Desktop folders, and Chrome form filling with approval before submit."
+description: "Find, tailor and apply to jobs end to end: tailored 1-page resumes and cover letters from Google Drive, Notion tracking, per-job Google Drive and Desktop folders, and Chrome form filling with approval before submit."
 ---
 
 # Job Application Assistant
@@ -19,7 +19,7 @@ Helps the user run a full job-application pipeline: find roles that fit, tailor 
 ## First-run setup (ask once, then reuse)
 
 Collect and confirm with the user:
-- Connections: Google Drive (resumes), Notion (tracker), Claude in Chrome (forms), Claude desktop app linked to their computer (Desktop folders). Check what is connected; suggest connecting what's missing.
+- Connections: Google Drive (resumes + per-job application folders), Notion (tracker), Claude in Chrome (forms), Claude desktop app linked to their computer (Desktop folders). Check what is connected; suggest connecting what's missing.
 - Target roles, seniority, locations (and preferences, e.g. a province or remote), daily goal.
 - Standard answers: legal name, email, phone, city/address, LinkedIn, portfolio/GitHub, work authorization, sponsorship need, notice/start date, pronouns and any demographic answers they want given, how to answer salary questions (e.g. "within the posted range"; a fallback number when no range is posted).
 - Education results (GPA, honours), so recurring questions don't need re-asking.
@@ -47,12 +47,17 @@ Store these in a working file for the session (not in the skill).
 
 **Job description in Notion (always)**: paste the full job description text into the body of each application's Notion page, under a "## Job Description" heading (insert_content). Copy it as-is; extra page text is fine. Quick source for LinkedIn postings: open `https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/<jobId>` in the browser and read the page text.
 
+**Google Drive folder (always)**: keep one parent folder `Job Applications <YEAR>` in the user's Drive (search for it first; create it with the Drive create-file tool and mimeType `application/vnd.google-apps.folder` only if missing). Inside it, create one subfolder per job named `<YYYY-MM-DD> – <Company> – <Role>`, and save into it:
+- the tailored resume and cover letter. Upload them as Google Docs by sending the document as HTML (`contentMimeType: text/html`, which converts to a Doc); build the HTML from the same resume spec/letter text used for the PDF, so the content matches exactly. Title them `Firstname Lastname – Resume – <Company>` and `Firstname Lastname – Cover Letter – <Company>`. (Uploading the PDFs themselves means base64 content — fine for small files, but HTML→Doc is much lighter; the user downloads PDF from Docs when needed.)
+- the job posting as a Doc (`Job Posting – <Company>`, full text + link, location, salary, date saved), when practical.
+Put the Drive subfolder link in the Notion page's `Desktop Folder` property (prefix `Drive:`), alongside the Desktop path if one exists. Note which Google account owns the Drive (it may differ from the email used on applications).
+
 **Desktop folder**: `~/Desktop/Job Applications/<YYYY-MM-DD> – <Company> – <Role>/` containing:
 - `resume.pdf` (+ .docx), `cover-letter.pdf`
 - `job-posting.md` — full posting text with link, location, salary, date saved
 - `notes.md` — fit notes, status, and after submitting: timestamp, confirmation message text, and every answer entered on the form verbatim
 - `screenshots/` when available
-Write files in the workspace, then copy them to the computer with the device file-commit tool.
+Write files in the workspace, then copy them to the computer with the device file-commit tool. If the computer or folder isn't reachable, the Drive folder is the record; say so and carry on.
 
 ### 5. Fill forms (Claude in Chrome)
 - Open each form in its own tab; upload files from a local workspace path (upload tools may reject paths in output/mounted folders; copy to a plain working dir first).
@@ -60,7 +65,7 @@ Write files in the workspace, then copy them to the computer with the device fil
 - Report to the user in one consolidated message: which forms are ready, the salary entered on each, and every question only they can answer.
 
 ### 6. Submit and log
-After approval: submit, confirm the success message, then immediately update notes.md (answers + confirmation), set Notion Status = Applied and Date Applied, and commit files to the Desktop.
+After approval: submit, confirm the success message, then immediately update notes.md (answers + confirmation), set Notion Status = Applied and Date Applied, paste the job description into the Notion page if not already there, make sure the job's Drive folder has its resume and cover letter, and commit files to the Desktop.
 
 ## ATS field-handling notes
 
@@ -72,4 +77,4 @@ After approval: submit, confirm the success message, then immediately update not
 - **Rate limits / tool errors**: if an element-finding tool is rate-limited, fall back to reading the page's interactive elements, JS queries and coordinate clicks.
 
 ## Wrap-up
-End each batch with: number submitted today vs goal, list of submitted companies, what's ready awaiting approval, what's blocked (account portals, emails to send, closed postings), and open questions for the user.
+End each batch with: number submitted today vs goal, list of submitted companies (with their Drive folder), what's ready awaiting approval, what's blocked (account portals, emails to send, closed postings), and open questions for the user.
